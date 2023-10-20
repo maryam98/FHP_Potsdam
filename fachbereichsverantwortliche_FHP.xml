@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<publishModul>
+
+	<fhpFbVerantwortliche>
+			<!-- Hier werden unterschriftsberechtigten Personen abhängig vom FB und Zeitraum festgelegt 
+				Es werden Datenzeile mit den Verantwortlichen für einen bestimmten "Von-Zeitraum" angegeben
+				Format einer Datenzeile: (DekanTitel;Dekan;PATitel;PA)
+				Dabei ist z.B. "Dekan" der Name des/der Dekan/in, und "DekanTitel" der angezeigte Rollenname z.B. "Die Dekanin"
+				Hinweis: Der aktuellste Datensatz muss ob stehen, da CASE-Abfrage von oben nach unten abgearbeitet wird.				
+			-->
+			<Transform.SubSQL ElementName="FBVerantwortliche" Database="sospos">
+				SELECT 
+					split_part(PAVorsitz, ';', 1) AS DekanTitel,
+					split_part(PAVorsitz, ';', 2) AS Dekan,
+					split_part(PAVorsitz, ';', 3) AS PATitel,
+					split_part(PAVorsitz, ';', 4) AS PA,
+					split_part(PraesidentData, ';', 1) AS PraesidentTitel,
+					split_part(PraesidentData, ';', 2) AS Praesident
+					From 
+					(
+					SELECT 
+					CASE 
+						WHEN stg.fb='01' THEN
+							CASE 
+								WHEN [Abschlussdatum]::date >= '2021-04-01'::date THEN 'Der Dekan;Prof. Dr. Frank Früchtel;Der Vorsitzende des Prüfungsausschusses;Prof. Dr. jur. Claus Richter'
+								ELSE 'Dekan/in;;Vorsitzende/r des Prüfungsausschusses;'
+							END	
+						
+						WHEN stg.fb='02' and stg.stg='013' THEN 
+							CASE
+								WHEN [Abschlussdatum]::date >= '2023-04-01'::date THEN 'Der Dekan;Prof. Dr. Jan Raue;Die Vorsitzende des Prüfungsausschusses;Prof. Dipl.-Ing. Hannah Jonas'
+								WHEN [Abschlussdatum]::date >= '2022-03-28'::date THEN 'Der Dekan;Prof. Dr. Jan Raue;Der Vorsitzende des Prüfungsausschusses;Prof. Dr. Markus Tubbesing'
+								WHEN [Abschlussdatum]::date >= '2021-04-01'::date THEN 'Die Dekanin;Prof. Nicola Lepp;Der Vorsitzende des Prüfungsausschusses;Prof. Dr. Markus Tubbesing'
+								ELSE 'Dekan/in;;Vorsitzende/r des Prüfungsausschusses;'
+							END
+							
+						WHEN stg.fb='02' and stg.stg='101' THEN 
+							CASE
+								WHEN [Abschlussdatum]::date >= '2022-03-28'::date THEN 'Der Dekan;Prof. Dr. Jan Raue;Die Vorsitzende des Prüfungsausschusses;Prof. Dr. Jeannine Meinhardt'
+								WHEN [Abschlussdatum]::date >= '2021-04-01'::date THEN 'Die Dekanin;Prof. Nicola Lepp;Der Vorsitzende des Prüfungsausschusses;Prof. Dipl.-Rest. Jörg Freitag'
+								ELSE 'Dekan/in;;Vorsitzende/r des Prüfungsausschusses;'
+							END
+
+						WHEN stg.fb='02' and stg.stg='953' THEN 
+							CASE	
+								WHEN [Abschlussdatum]::date >= '2023-04-01'::date THEN 'Der Dekan;Prof. Dr. Jan Raue;Der Vorsitzende des Prüfungsausschusses;Prof. Dr.-Ing. Michael Prytula'
+								WHEN [Abschlussdatum]::date >= '2022-03-28'::date THEN 'Der Dekan;Prof. Dr. Jan Raue;Der Vorsitzende des Prüfungsausschusses;Prof. Dr. habil. Ulrich Richtmeyer'
+								WHEN [Abschlussdatum]::date >= '2021-04-01'::date THEN 'Die Dekanin;Prof. Nicola Lepp;Der Vorsitzende des Prüfungsausschusses;Prof. Dr.-Ing. Michael Prytula'
+								ELSE 'Dekan/in;;Vorsitzende/r des Prüfungsausschusses;'
+							END
+						
+						WHEN stg.fb='03' THEN 
+							CASE 
+								WHEN [Abschlussdatum]::date >= '2023-10-01'::date THEN 'Der Dekan;Prof. Dr.-Ing. Gunar Gutzeit;Die Vorsitzende des Prüfungsausschusses;Prof. Dipl.-Ing. Betty H. Müller;'
+								WHEN [Abschlussdatum]::date >= '2021-01-01'::date THEN 'Der Dekan;Prof. Dr.-Ing. André Brendike;Die Vorsitzende des Prüfungsausschusses;Prof. Dipl.-Ing. Betty H. Müller;'
+								WHEN [Abschlussdatum]::date >= '2020-10-01'::date THEN 'Der Dekan;Prof. Dr.-Ing. André Brendike;Der Vorsitzende des Prüfungsausschusses;Prof. Dipl.-Phys. Rüdiger Lorenz;'
+								ELSE 'Dekan/in;;Vorsitzende/r des Prüfungsausschusses;'
+							END	
+						
+						WHEN stg.fb='04' THEN
+							CASE 
+								WHEN [Abschlussdatum]::date >= '2021-04-21'::date THEN 'Der Dekan;Prof. Matthias Beyrow;Der Vorsitzende des Prüfungsausschusses;Prof. Jörg Hundertpfund;'
+								WHEN [Abschlussdatum]::date >= '2020-04-01'::date THEN 'Der Dekan;Prof. Matthias Beyrow;Die Vorsitzende des Prüfungsausschusses;Prof. Alexandra Martini;'
+								ELSE 'Dekan/in;;Vorsitzende/r des Prüfungsausschusses;'
+							END	
+						
+						WHEN stg.fb='05' THEN
+							CASE 
+								WHEN [Abschlussdatum]::date >= '2021-03-01'::date THEN 'Die Dekanin;Prof. Dr. jur. Ellen Euler, LL.M.;Der Vorsitzende des Prüfungsausschusses;Prof. Dr. Michael Scholz'
+								ELSE 'Dekan/in;;Vorsitzende/r des Prüfungsausschusses;;Präsident/in;'
+							END			
+						
+						ELSE 'Dekan/in;;Vorsitzende/r des Prüfungsausschusses;'
+					END AS PAVorsitz,
+					
+					
+					CASE 
+						WHEN [Abschlussdatum]::date >= '2019-01-01'::date THEN 'Die Präsidentin;Prof. Dr. Eva Schmitt-Rodermund'
+						WHEN [Abschlussdatum]::date >= '2014-01-01'::date THEN 'Der Präsident;Prof. Dr. phil. Eckehard Binas'
+						ELSE 'Präsident/in;'
+					END AS PraesidentData
+					
+					
+					
+					FROM stg
+					WHERE stg.stg = '[Stg]' LIMIT 1
+					) Vorsitz limit 1
+			</Transform.SubSQL>
+	</fhpFbVerantwortliche>
+	
+</publishModul>
